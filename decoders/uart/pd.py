@@ -139,25 +139,32 @@ class Decoder(srd.Decoder):
     )
     idle_state = ['WAIT FOR START BIT', 'WAIT FOR START BIT']
 
+    def _put(self, ss, es, t, data):
+        self.cache.append((ss, es, t, data))
+        if len(self.cache) > 10:
+            # Emit all items in one go.
+            self.putlist(self.cache)
+            self.cache = []
+
     def putx(self, rxtx, data):
         s, halfbit = self.startsample[rxtx], self.bit_width / 2.0
-        self.put(s - floor(halfbit), self.samplenum + ceil(halfbit), self.out_ann, data)
+        self._put(s - floor(halfbit), self.samplenum + ceil(halfbit), self.out_ann, data)
 
     def putpx(self, rxtx, data):
         s, halfbit = self.startsample[rxtx], self.bit_width / 2.0
-        self.put(s - floor(halfbit), self.samplenum + ceil(halfbit), self.out_python, data)
+        self._put(s - floor(halfbit), self.samplenum + ceil(halfbit), self.out_python, data)
 
     def putg(self, data):
         s, halfbit = self.samplenum, self.bit_width / 2.0
-        self.put(s - floor(halfbit), s + ceil(halfbit), self.out_ann, data)
+        self._put(s - floor(halfbit), s + ceil(halfbit), self.out_ann, data)
 
     def putp(self, data):
         s, halfbit = self.samplenum, self.bit_width / 2.0
-        self.put(s - floor(halfbit), s + ceil(halfbit), self.out_python, data)
+        self._put(s - floor(halfbit), s + ceil(halfbit), self.out_python, data)
 
     def putbin(self, rxtx, data):
         s, halfbit = self.startsample[rxtx], self.bit_width / 2.0
-        self.put(s - floor(halfbit), self.samplenum + ceil(halfbit), self.out_binary, data)
+        self._put(s - floor(halfbit), self.samplenum + ceil(halfbit), self.out_binary, data)
 
     def __init__(self):
         self.samplerate = None
@@ -171,6 +178,7 @@ class Decoder(srd.Decoder):
         self.startsample = [-1, -1]
         self.state = ['WAIT FOR START BIT', 'WAIT FOR START BIT']
         self.databits = [[], []]
+        self.cache = []
 
     def start(self):
         self.out_python = self.register(srd.OUTPUT_PYTHON)

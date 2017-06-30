@@ -351,6 +351,47 @@ err:
 	return NULL;
 }
 
+static PyObject *Decoder_putlist(PyObject *self, PyObject *args)
+{
+	struct srd_decoder_inst *di;
+	PyObject *py_tuple, *py_list;
+	PyGILState_STATE gstate;
+	unsigned int i, num_items;
+
+	gstate = PyGILState_Ensure();
+
+	if (!(di = srd_inst_find_by_obj(NULL, self))) {
+		/* Shouldn't happen. */
+		srd_dbg("put(): self instance not found.");
+		goto err;
+	}
+
+	if (!PyArg_ParseTuple(args, "O", &py_list))
+		goto err;
+
+	if (!PyList_Check(py_list)) {
+		srd_err("Protocol decoder %s submitted a non-list.",
+			di->decoder->name);
+		goto err;
+	}
+
+	num_items = PyList_Size(py_list);
+
+	for (i = 0; i < num_items; i++) {
+		py_tuple = PyList_GetItem(py_list, i);
+		(void)Decoder_put(self, py_tuple); /* TODO: Return value? */
+	}
+
+	PyGILState_Release(gstate);
+
+	Py_RETURN_NONE;
+
+err:
+	PyGILState_Release(gstate);
+
+	return NULL;
+}
+
 static PyObject *Decoder_register(PyObject *self, PyObject *args,
 		PyObject *kwargs)
 {
@@ -906,6 +947,8 @@ err:
 static PyMethodDef Decoder_methods[] = {
 	{"put", Decoder_put, METH_VARARGS,
 	 "Accepts a dictionary with the following keys: startsample, endsample, data"},
+	{"putlist", Decoder_putlist, METH_VARARGS,
+	 "TODO"},
 	{"register", (PyCFunction)Decoder_register, METH_VARARGS|METH_KEYWORDS,
 			"Register a new output stream"},
 	{"wait", Decoder_wait, METH_VARARGS,
