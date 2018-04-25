@@ -336,6 +336,25 @@ SRD_API int srd_session_terminate_reset(struct srd_session *sess)
 	return SRD_OK;
 }
 
+SRD_API int srd_session_end_of_stream(struct srd_session *sess)
+{
+	GSList *d;
+	int ret;
+
+	if (session_is_valid(sess) != SRD_OK) {
+		srd_err("Invalid session.");
+		return SRD_ERR_ARG;
+	}
+
+	for (d = sess->di_list; d; d = d->next) {
+		ret = srd_inst_end_of_stream(d->data);
+		if (ret != SRD_OK)
+			return ret;
+	}
+
+	return SRD_OK;
+}
+
 /**
  * Destroy a decoding session.
  *

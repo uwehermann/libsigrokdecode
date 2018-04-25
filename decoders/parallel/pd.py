@@ -209,3 +209,21 @@ class Decoder(srd.Decoder):
             bits = [0 if idx is None else pins[idx] for idx in idx_channels]
             item = bitpack(bits[1:idx_strip])
             self.handle_bits(item, num_item_bits)
+
+    def end_of_stream(self):
+        # WIP
+
+        if self.saved_word is not None:
+            if self.options['wordsize'] > 0:
+                self.es_word = self.samplenum
+                self.putw([1, [self.fmt_word.format(self.saved_word)]])
+                self.putpw(['WORD', self.saved_word])
+            self.saved_word = None
+
+        if not self.first:
+            # Output the saved item (from the last CLK edge to the current).
+            self.es_item = self.samplenum
+            self.putpb(['ITEM', self.saved_item])
+            self.putb([0, [self.fmt_item.format(self.saved_item)]])
+            self.ss_item = self.samplenum
+            self.saved_item = item

@@ -1271,6 +1271,41 @@ SRD_PRIV int srd_inst_decode(struct srd_decoder_inst *di,
 	return SRD_OK;
 }
 
+/* Send end-of-stream signal to the specified decoder (and all stacked PDs). */
+SRD_PRIV int srd_inst_end_of_stream(struct srd_decoder_inst *di)
+{
+	int ret;
+	GSList *l;
+	PyGILState_STATE gstate;
+	PyObject *py_ret;
+	struct srd_decoder_inst *next_di;
+
+	if (!di)
+		return SRD_ERR_ARG;
+
+	gstate = PyGILState_Ensure();
+
+	PyObject_SetAttrString(di->py_inst, "samplenum",
+		PyLong_FromLong(di->abs_cur_samplenum));
+
+	if (PyObject_HasAttrString(di->py_inst, "end_of_stream")) {
+		srd_dbg("Calling .end_of_stream() of instance %s", di->inst_id);
+		py_ret = PyObject_CallMethod(di->py_inst, "end_of_stream", NULL);
+		Py_XDECREF(py_ret);
+	}
+
+	PyGILState_Release(gstate);
+
+	/* Notify all the PDs stacked on top of this one. */
+	for (l = di->next_di; l; l = l->next) {
+		next_di = l->data;
+		if ((ret = srd_inst_end_of_stream(next_di)) != SRD_OK)
+			return ret;
+	}
+
+	return SRD_OK;
+}
+
 /**
  * Terminate current decoder work, prepare for re-use on new input data.
  *

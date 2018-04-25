@@ -87,6 +87,7 @@ SRD_PRIV int process_samples_until_condition_match(struct srd_decoder_inst *di, 
 SRD_PRIV int srd_inst_terminate_reset(struct srd_decoder_inst *di);
 SRD_PRIV void srd_inst_free(struct srd_decoder_inst *di);
 SRD_PRIV void srd_inst_free_all(struct srd_session *sess);
+SRD_PRIV int srd_inst_end_of_stream(struct srd_decoder_inst *di);
 
 /* log.c */
 #if defined(G_OS_WIN32) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4))
