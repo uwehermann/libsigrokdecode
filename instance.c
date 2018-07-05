@@ -1147,19 +1147,19 @@ SRD_PRIV int srd_inst_decode(struct srd_decoder_inst *di,
 	/* Return an error upon unusable input. */
 	if (!di) {
 		srd_dbg("empty decoder instance");
-		return SRD_ERR_ARG;
+		SRD_RET(SRD_ERR_ARG);
 	}
 	if (!inbuf) {
 		srd_dbg("NULL buffer pointer");
-		return SRD_ERR_ARG;
+		SRD_RET(SRD_ERR_ARG);
 	}
 	if (inbuflen == 0) {
 		srd_dbg("empty buffer");
-		return SRD_ERR_ARG;
+		SRD_RET(SRD_ERR_ARG);
 	}
 	if (unitsize == 0) {
 		srd_dbg("unitsize 0");
-		return SRD_ERR_ARG;
+		SRD_RET(SRD_ERR_ARG);
 	}
 
 	if (abs_start_samplenum != di->abs_cur_samplenum ||
@@ -1167,7 +1167,7 @@ SRD_PRIV int srd_inst_decode(struct srd_decoder_inst *di,
 		srd_dbg("Incorrect sample numbers: start=%" PRIu64 ", cur=%"
 			PRIu64 ", end=%" PRIu64 ".", abs_start_samplenum,
 			di->abs_cur_samplenum, abs_end_samplenum);
-		return SRD_ERR_ARG;
+		SRD_RET(SRD_ERR_ARG);
 	}
 
 	di->data_unitsize = unitsize;
@@ -1206,9 +1206,9 @@ SRD_PRIV int srd_inst_decode(struct srd_decoder_inst *di,
 	g_mutex_unlock(&di->data_mutex);
 
 	if (di->want_wait_terminate)
-		return SRD_ERR_TERM_REQ;
+		SRD_RET(SRD_ERR_TERM_REQ);
 
-	return SRD_OK;
+	SRD_RET(SRD_OK);
 }
 
 /**
@@ -1237,7 +1237,7 @@ SRD_PRIV int srd_inst_terminate_reset(struct srd_decoder_inst *di)
 	int ret;
 
 	if (!di)
-		return SRD_ERR_ARG;
+		SRD_RET(SRD_ERR_ARG);
 
 	/*
 	 * Request termination and wait for previously initiated
@@ -1269,10 +1269,10 @@ SRD_PRIV int srd_inst_terminate_reset(struct srd_decoder_inst *di)
 	for (l = di->next_di; l; l = l->next) {
 		ret = srd_inst_terminate_reset(l->data);
 		if (ret != SRD_OK)
-			return ret;
+			SRD_RET(ret);
 	}
 
-	return di->decoder_state;
+	SRD_RET(di->decoder_state);
 }
 
 /** @private */

@@ -54,6 +54,10 @@ static srd_log_callback srd_log_cb = srd_logv;
  */
 static void *srd_log_cb_data = NULL;
 
+/** @cond PRIVATE */
+static GSList *backtrace = NULL;
+/** @endcond */
+
 /**
  * Set the libsigrokdecode loglevel.
  *
@@ -190,11 +194,27 @@ static int srd_logv(void *cb_data, int loglevel, const char *format,
 	return SRD_OK;
 }
 
+SRD_PRIV void srd_bt_clear(void)
+{
+	if (!backtrace)
+		return;
+
+	g_slist_free_full(backtrace, g_free);
+	backtrace = NULL;
+}
+
+SRD_API GSList *srd_bt_get(void)
+{
+	return backtrace;
+}
+
 /** @private */
-SRD_PRIV int srd_log(int loglevel, const char *format, ...)
+SRD_PRIV int srd_log(int loglevel, const char *file, int line,
+		const char *format, ...)
 {
 	int ret;
 	va_list args;
+	char *s, *filename;
 
 	/* Only output messages of at least the selected loglevel(s). */
 	if (loglevel > cur_loglevel)
@@ -202,6 +222,15 @@ SRD_PRIV int srd_log(int loglevel, const char *format, ...)
 
 	va_start(args, format);
 	ret = srd_log_cb(srd_log_cb_data, loglevel, format, args);
+	va_end(args);
+
+	va_start(args, format);
+	g_vasprintf(&s, format, args);
+	filename = g_path_get_basename(file);
+	backtrace = g_slist_append(backtrace,
+		g_strdup_printf("%s:%d: %s", filename, line, s));
+	g_free(filename);
+	g_free(s);
 	va_end(args);
 
 	return ret;

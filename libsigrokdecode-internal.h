@@ -91,17 +91,29 @@ SRD_PRIV void srd_inst_free_all(struct srd_session *sess);
  * On MinGW, we need to specify the gnu_printf format flavor or GCC
  * will assume non-standard Microsoft printf syntax.
  */
-SRD_PRIV int srd_log(int loglevel, const char *format, ...)
-		__attribute__((__format__ (__gnu_printf__, 2, 3)));
+SRD_PRIV int srd_log(int loglevel, const char *file, int line,
+		const char *format, ...)
+		__attribute__((__format__ (__gnu_printf__, 4, 5)));
 #else
-SRD_PRIV int srd_log(int loglevel, const char *format, ...) G_GNUC_PRINTF(2, 3);
+SRD_PRIV int srd_log(int loglevel, const char *file, int line,
+		const char *format, ...) G_GNUC_PRINTF(4, 5);
 #endif
 
-#define srd_spew(...)	srd_log(SRD_LOG_SPEW, __VA_ARGS__)
-#define srd_dbg(...)	srd_log(SRD_LOG_DBG,  __VA_ARGS__)
-#define srd_info(...)	srd_log(SRD_LOG_INFO, __VA_ARGS__)
-#define srd_warn(...)	srd_log(SRD_LOG_WARN, __VA_ARGS__)
-#define srd_err(...)	srd_log(SRD_LOG_ERR,  __VA_ARGS__)
+#define srd_spew(...)	srd_log(SRD_LOG_SPEW, __FILE__, __LINE__, __VA_ARGS__)
+#define srd_dbg(...)	srd_log(SRD_LOG_DBG,  __FILE__, __LINE__, __VA_ARGS__)
+#define srd_info(...)	srd_log(SRD_LOG_INFO, __FILE__, __LINE__, __VA_ARGS__)
+#define srd_warn(...)	srd_log(SRD_LOG_WARN, __FILE__, __LINE__, __VA_ARGS__)
+#define srd_err(...)	srd_log(SRD_LOG_ERR,  __FILE__, __LINE__, __VA_ARGS__)
+
+SRD_PRIV void srd_bt_clear(void);
+
+/* Return the specified expression. If it's SRD_OK, also clear the backtrace. */
+#define SRD_RET(ret) \
+	do { \
+		if ((ret) == SRD_OK) \
+			srd_bt_clear(); \
+		return (ret); \
+	} while (0)
 
 /* decoder.c */
 SRD_PRIV long srd_decoder_apiver(const struct srd_decoder *d);

@@ -94,7 +94,7 @@ SRD_API int srd_session_start(struct srd_session *sess)
 	int ret;
 
 	if (!sess)
-		return SRD_ERR_ARG;
+		SRD_RET(SRD_ERR_ARG);
 
 	srd_dbg("Calling start() of all instances in session %d.", sess->session_id);
 
@@ -106,7 +106,7 @@ SRD_API int srd_session_start(struct srd_session *sess)
 			break;
 	}
 
-	return ret;
+	SRD_RET(ret);
 }
 
 static int srd_inst_send_meta(struct srd_decoder_inst *di, int key,
@@ -267,15 +267,15 @@ SRD_API int srd_session_send(struct srd_session *sess,
 	int ret;
 
 	if (!sess)
-		return SRD_ERR_ARG;
+		SRD_RET(SRD_ERR_ARG);
 
 	for (d = sess->di_list; d; d = d->next) {
 		if ((ret = srd_inst_decode(d->data, abs_start_samplenum,
 				abs_end_samplenum, inbuf, inbuflen, unitsize)) != SRD_OK)
-			return ret;
+			SRD_RET(ret);
 	}
 
-	return SRD_OK;
+	SRD_RET(SRD_OK);
 }
 
 /**
@@ -306,15 +306,15 @@ SRD_API int srd_session_terminate_reset(struct srd_session *sess)
 	int ret;
 
 	if (!sess)
-		return SRD_ERR_ARG;
+		SRD_RET(SRD_ERR_ARG);
 
 	for (d = sess->di_list; d; d = d->next) {
 		ret = srd_inst_terminate_reset(d->data);
 		if (ret != SRD_OK)
-			return ret;
+			SRD_RET(ret);
 	}
 
-	return SRD_OK;
+	SRD_RET(SRD_OK);
 }
 
 /**

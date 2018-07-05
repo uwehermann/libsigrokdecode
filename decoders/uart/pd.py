@@ -398,3 +398,4 @@ class Decoder(srd.Decoder):
                 self.inspect_sample(RX, rx, inv[RX])
             if cond_idx[TX] is not None and self.matched[cond_idx[TX]]:
                 self.inspect_sample(TX, tx, inv[TX])
+            raise Exception('Foo')
