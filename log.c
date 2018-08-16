@@ -213,7 +213,7 @@ SRD_PRIV int srd_log(int loglevel, const char *file, int line,
 		const char *format, ...)
 {
 	int ret;
-	va_list args;
+	va_list args, args2;
 	char *s, *filename;
 
 	/* Only output messages of at least the selected loglevel(s). */
@@ -221,17 +221,17 @@ SRD_PRIV int srd_log(int loglevel, const char *file, int line,
 		return SRD_OK;
 
 	va_start(args, format);
+	va_copy(args2, args);
 	ret = srd_log_cb(srd_log_cb_data, loglevel, format, args);
 	va_end(args);
 
-	va_start(args, format);
-	g_vasprintf(&s, format, args);
+	g_vasprintf(&s, format, args2);
 	filename = g_path_get_basename(file);
 	backtrace = g_slist_append(backtrace,
 		g_strdup_printf("%s:%d: %s", filename, line, s));
 	g_free(filename);
 	g_free(s);
-	va_end(args);
+	va_end(args2);
 
 	return ret;
 }
