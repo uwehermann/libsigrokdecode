@@ -30,7 +30,7 @@
 
 extern SRD_PRIV GSList *sessions;
 
-static void srd_inst_join_decode_thread(struct srd_decoder_inst *di);
+static GSList *srd_inst_join_decode_thread(struct srd_decoder_inst *di);
 static void srd_inst_reset_state(struct srd_decoder_inst *di);
 static void oldpins_array_seed(struct srd_decoder_inst *di);
 static void oldpins_array_free(struct srd_decoder_inst *di);
@@ -416,12 +416,14 @@ SRD_API struct srd_decoder_inst *srd_inst_new(struct srd_session *sess,
 	return di;
 }
 
-static void srd_inst_join_decode_thread(struct srd_decoder_inst *di)
+static GSList *srd_inst_join_decode_thread(struct srd_decoder_inst *di)
 {
+	GSList *trace;
+
 	if (!di)
-		return;
+		return NULL;
 	if (!di->thread_handle)
-		return;
+		return NULL;
 
 	srd_dbg("%s: Joining decoder thread.", di->inst_id);
 
@@ -436,7 +438,7 @@ static void srd_inst_join_decode_thread(struct srd_decoder_inst *di)
 	g_mutex_unlock(&di->data_mutex);
 
 	srd_dbg("%s: Running join().", di->inst_id);
-	(void)g_thread_join(di->thread_handle);
+	trace = g_thread_join(di->thread_handle);
 	srd_dbg("%s: Call to join() done.", di->inst_id);
 	di->thread_handle = NULL;
 
@@ -450,6 +452,8 @@ static void srd_inst_join_decode_thread(struct srd_decoder_inst *di)
 	g_cond_init(&di->handled_all_samples_cond);
 	g_mutex_clear(&di->data_mutex);
 	g_mutex_init(&di->data_mutex);
+
+	return trace;
 }
 
 static void srd_inst_reset_state(struct srd_decoder_inst *di)
@@ -1018,6 +1022,7 @@ static gpointer di_thread(gpointer data)
 
 	srd_dbg("%s: Starting thread routine for decoder.", di->inst_id);
 
+	srd_bt_init();
 	gstate = PyGILState_Ensure();
 
 	/*
@@ -1059,7 +1064,7 @@ static gpointer di_thread(gpointer data)
 		srd_dbg("%s: Thread done (!res, want_term).", di->inst_id);
 		PyErr_Clear();
 		PyGILState_Release(gstate);
-		return NULL;
+		return srd_bt_get();
 	}
 	if (!py_res) {
 		/*
@@ -1071,7 +1076,7 @@ static gpointer di_thread(gpointer data)
 		srd_exception_catch("Protocol decoder instance %s: ", di->inst_id);
 		srd_dbg("%s: Thread done (!res, !want_term).", di->inst_id);
 		PyGILState_Release(gstate);
-		return NULL;
+		return srd_bt_get();
 	}
 
 	/*
@@ -1087,7 +1092,7 @@ static gpointer di_thread(gpointer data)
 
 	srd_dbg("%s: Thread done (with res).", di->inst_id);
 
-	return NULL;
+	return srd_bt_get();
 }
 
 /**
@@ -1233,7 +1238,7 @@ SRD_PRIV int srd_inst_terminate_reset(struct srd_decoder_inst *di)
 {
 	PyGILState_STATE gstate;
 	PyObject *py_ret;
-	GSList *l;
+	GSList *trace, *l;
 	int ret;
 
 	if (!di)
@@ -1247,7 +1252,14 @@ SRD_PRIV int srd_inst_terminate_reset(struct srd_decoder_inst *di)
 	 * the C language library side.
 	 */
 	srd_dbg("Terminating instance %s", di->inst_id);
-	srd_inst_join_decode_thread(di);
+	trace = srd_inst_join_decode_thread(di);
+	if (trace) {
+		/* TODO
+		 * Append the reaped thread's backtrace to our own?
+		 * Decorate it? Need we grow an srd_bt_put() routine?
+		 */
+		(void)trace;
+	}
 	srd_inst_reset_state(di);
 
 	/*
@@ -1284,7 +1296,7 @@ SRD_PRIV void srd_inst_free(struct srd_decoder_inst *di)
 
 	srd_dbg("Freeing instance %s.", di->inst_id);
 
-	srd_inst_join_decode_thread(di);
+	(void)srd_inst_join_decode_thread(di);
 
 	srd_inst_reset_state(di);
 

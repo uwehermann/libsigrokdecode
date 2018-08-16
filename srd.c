@@ -222,6 +222,8 @@ SRD_API int srd_init(const char *path)
 	size_t i;
 	int ret;
 
+	srd_bt_init();
+
 	if (max_session_id != -1) {
 		srd_err("libsigrokdecode is already initialized.");
 		return SRD_ERR;

@@ -55,7 +55,7 @@ static srd_log_callback srd_log_cb = srd_logv;
 static void *srd_log_cb_data = NULL;
 
 /** @cond PRIVATE */
-static GSList *backtrace = NULL;
+static __thread GSList *backtrace;
 /** @endcond */
 
 /**
@@ -194,6 +194,11 @@ static int srd_logv(void *cb_data, int loglevel, const char *format,
 	return SRD_OK;
 }
 
+SRD_PRIV void srd_bt_init(void)
+{
+	backtrace = NULL;
+}
+
 SRD_PRIV void srd_bt_clear(void)
 {
 	if (!backtrace)
@@ -205,7 +210,11 @@ SRD_PRIV void srd_bt_clear(void)
 
 SRD_API GSList *srd_bt_get(void)
 {
-	return backtrace;
+	GSList *bt_res;
+
+	bt_res = backtrace;
+	backtrace = NULL;
+	return bt_res;
 }
 
 /** @private */

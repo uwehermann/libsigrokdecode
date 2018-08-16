@@ -105,6 +105,7 @@ SRD_PRIV int srd_log(int loglevel, const char *file, int line,
 #define srd_warn(...)	srd_log(SRD_LOG_WARN, __FILE__, __LINE__, __VA_ARGS__)
 #define srd_err(...)	srd_log(SRD_LOG_ERR,  __FILE__, __LINE__, __VA_ARGS__)
 
+SRD_PRIV void srd_bt_init(void);
 SRD_PRIV void srd_bt_clear(void);
 
 /* Return the specified expression. If it's SRD_OK, also clear the backtrace. */
