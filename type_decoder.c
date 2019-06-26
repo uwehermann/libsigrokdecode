@@ -354,7 +354,7 @@ static PyObject *Decoder_put(PyObject *self, PyObject *args)
 	pdo = l->data;
 
 	/* Upon SRD_OUTPUT_PYTHON for stacked PDs, we have a nicer log message later. */
-	if (pdo->output_type != SRD_OUTPUT_PYTHON && di->next_di != NULL) {
+	if (!(pdo->output_type == SRD_OUTPUT_PYTHON && di->next_di == NULL)) {
 		srd_spew("Instance %s put %" PRIu64 "-%" PRIu64 " %s on "
 			 "oid %d (%s).", di->inst_id, start_sample, end_sample,
 			 output_type_name(pdo->output_type), output_id,
