@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBSIGROKDECODE_VERSION_H
-#define LIBSIGROKDECODE_VERSION_H
+#ifndef LIBSIGROKDECODE_LIBSIGROKDECODE_VERSION_H
+#define LIBSIGROKDECODE_LIBSIGROKDECODE_VERSION_H
 
 /**
  * @file
@@ -38,32 +38,32 @@
  */
 
 /** The libsigrokdecode package 'major' version number. */
-#undef SRD_PACKAGE_VERSION_MAJOR
+#define SRD_PACKAGE_VERSION_MAJOR @CMAKE_PROJECT_VERSION_MAJOR@
 
 /** The libsigrokdecode package 'minor' version number. */
-#undef SRD_PACKAGE_VERSION_MINOR
+#define SRD_PACKAGE_VERSION_MINOR @CMAKE_PROJECT_VERSION_MINOR@
 
 /** The libsigrokdecode package 'micro' version number. */
-#undef SRD_PACKAGE_VERSION_MICRO
+#define SRD_PACKAGE_VERSION_MICRO @CMAKE_PROJECT_VERSION_PATCH@
 
 /** The libsigrokdecode package version ("major.minor.micro") as string. */
-#undef SRD_PACKAGE_VERSION_STRING
+#define SRD_PACKAGE_VERSION_STRING "@PROJECT_VERSION@"
 
 /*
  * Library/libtool version macros (can be used for conditional compilation).
  */
 
 /** The libsigrokdecode libtool 'current' version number. */
-#undef SRD_LIB_VERSION_CURRENT
+#define SRD_LIB_VERSION_CURRENT 9
 
 /** The libsigrokdecode libtool 'revision' version number. */
-#undef SRD_LIB_VERSION_REVISION
+#define SRD_LIB_VERSION_REVISION 8
 
 /** The libsigrokdecode libtool 'age' version number. */
-#undef SRD_LIB_VERSION_AGE
+#define SRD_LIB_VERSION_AGE 7
 
 /** The libsigrokdecode libtool version ("current:revision:age") as string. */
-#undef SRD_LIB_VERSION_STRING
+#define SRD_LIB_VERSION_STRING "9:8:7"
 
 /** @} */
 

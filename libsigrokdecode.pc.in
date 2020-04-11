@@ -1,18 +1,18 @@
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-libdir=@libdir@
-includedir=@includedir@
-datarootdir=@datarootdir@
-datadir=@datadir@
-pkgdatadir=${datadir}/@PACKAGE_TARNAME@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+datarootdir=${prefix}/@CMAKE_INSTALL_DATAROOTDIR@
+datadir=${datarootdir}
+pkgdatadir=${datadir}/lib@PROJECT_NAME@
 decodersdir=${pkgdatadir}/decoders
 
 Name: libsigrokdecode
 Description: Protocol decoder library of the sigrok logic analyzer software
-URL: http://www.sigrok.org
+URL: https://www.sigrok.org
 Requires: glib-2.0
 Requires.private: @SRD_PKGLIBS@
-Version: @SRD_PACKAGE_VERSION@
+Version: @PROJECT_VERSION@
 Libs: -L${libdir} -lsigrokdecode
-Libs.private: @SRD_EXTRA_LIBS@
+Libs.private: -lm
 Cflags: -I${includedir}

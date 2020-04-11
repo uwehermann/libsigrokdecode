@@ -20,7 +20,7 @@
 
 #include <config.h>
 #include "libsigrokdecode-internal.h" /* First, so we avoid a _POSIX_C_SOURCE warning. */
-#include "libsigrokdecode.h"
+#include <libsigrokdecode/libsigrokdecode.h>
 #include <glib.h>
 
 /** @cond PRIVATE */
@@ -100,7 +100,7 @@ static int searchpath_add_xdg_dir(const char *datadir)
 	char *decdir;
 	int ret;
 
-	decdir = g_build_filename(datadir, PACKAGE_TARNAME, "decoders", NULL);
+	decdir = g_build_filename(datadir, "libsigrokdecode", "decoders", NULL);
 
 	if (g_file_test(decdir, G_FILE_TEST_IS_DIR))
 		ret = srd_decoder_searchpath_add(decdir);

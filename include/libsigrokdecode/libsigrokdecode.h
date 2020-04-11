@@ -28,6 +28,9 @@
 extern "C" {
 #endif
 
+#include <libsigrokdecode/libsigrokdecode_export.h>
+#include <libsigrokdecode/libsigrokdecode_version.h>
+
 struct srd_session;
 
 /**
@@ -88,36 +91,6 @@ enum srd_loglevel {
 	SRD_LOG_DBG  = 4, /**< Output debug messages. */
 	SRD_LOG_SPEW = 5, /**< Output very noisy debug messages. */
 };
-
-/*
- * Use SRD_API to mark public API symbols, and SRD_PRIV for private symbols.
- *
- * Variables and functions marked 'static' are private already and don't
- * need SRD_PRIV. However, functions which are not static (because they need
- * to be used in other libsigrokdecode-internal files) but are also not
- * meant to be part of the public libsigrokdecode API, must use SRD_PRIV.
- *
- * This uses the 'visibility' feature of gcc (requires gcc >= 4.0).
- *
- * This feature is not available on MinGW/Windows, as it is a feature of
- * ELF files and MinGW/Windows uses PE files.
- *
- * Details: http://gcc.gnu.org/wiki/Visibility
- */
-
-/* Marks public libsigrokdecode API symbols. */
-#ifndef _WIN32
-#define SRD_API __attribute__((visibility("default")))
-#else
-#define SRD_API
-#endif
-
-/* Marks private, non-public libsigrokdecode symbols (not part of the API). */
-#ifndef _WIN32
-#define SRD_PRIV __attribute__((visibility("hidden")))
-#else
-#define SRD_PRIV
-#endif
 
 /*
  * When adding an output type, don't forget to...
@@ -389,8 +362,6 @@ SRD_API int srd_lib_version_age_get(void);
 SRD_API const char *srd_lib_version_string_get(void);
 SRD_API GSList *srd_buildinfo_libs_get(void);
 SRD_API char *srd_buildinfo_host_get(void);
-
-#include "version.h"
 
 #ifdef __cplusplus
 }

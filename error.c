@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "libsigrokdecode.h"
+#include <libsigrokdecode/libsigrokdecode.h>
 
 /**
  * @file

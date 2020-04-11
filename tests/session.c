@@ -19,8 +19,9 @@
 
 #include <config.h>
 #include <libsigrokdecode-internal.h> /* First, to avoid compiler warning. */
-#include <libsigrokdecode.h>
+#include <libsigrokdecode/libsigrokdecode.h> /* First, to avoid compiler warning. */
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdlib.h>
 #include <check.h>
 #include "lib.h"
