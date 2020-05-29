@@ -49,22 +49,6 @@
 /** The libsigrokdecode package version ("major.minor.micro") as string. */
 #define SRD_PACKAGE_VERSION_STRING "@PROJECT_VERSION@"
 
-/*
- * Library/libtool version macros (can be used for conditional compilation).
- */
-
-/** The libsigrokdecode libtool 'current' version number. */
-#define SRD_LIB_VERSION_CURRENT 9
-
-/** The libsigrokdecode libtool 'revision' version number. */
-#define SRD_LIB_VERSION_REVISION 8
-
-/** The libsigrokdecode libtool 'age' version number. */
-#define SRD_LIB_VERSION_AGE 7
-
-/** The libsigrokdecode libtool version ("current:revision:age") as string. */
-#define SRD_LIB_VERSION_STRING "9:8:7"
-
 /** @} */
 
 #endif

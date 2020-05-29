@@ -32,16 +32,7 @@
  *
  * Version number querying functions, definitions, and macros.
  *
- * This set of API calls returns two different version numbers related
- * to libsigrokdecode. The "package version" is the release version number
- * of the libsigrokdecode tarball in the usual "major.minor.micro" format,
- * e.g. "0.1.0".
- *
- * The "library version" is independent of that; it is the libtool version
- * number in the "current:revision:age" format, e.g. "2:0:0".
- * See http://www.gnu.org/software/libtool/manual/libtool.html#Libtool-versioning for details.
- *
- * Both version numbers (and/or individual components of them) can be
+ * The version numbers (and/or individual components of them) can be
  * retrieved via the API calls at runtime, and/or they can be checked at
  * compile/preprocessor time using the respective macros.
  *
@@ -95,55 +86,6 @@ SRD_API int srd_package_version_micro_get(void)
 SRD_API const char *srd_package_version_string_get(void)
 {
 	return SRD_PACKAGE_VERSION_STRING;
-}
-
-/**
- * Get the "current" part of the libsigrokdecode library version number.
- *
- * @return The "current" library version number.
- *
- * @since 0.1.0
- */
-SRD_API int srd_lib_version_current_get(void)
-{
-	return SRD_LIB_VERSION_CURRENT;
-}
-
-/**
- * Get the "revision" part of the libsigrokdecode library version number.
- *
- * @return The "revision" library version number.
- *
- * @since 0.1.0
- */
-SRD_API int srd_lib_version_revision_get(void)
-{
-	return SRD_LIB_VERSION_REVISION;
-}
-
-/**
- * Get the "age" part of the libsigrokdecode library version number.
- *
- * @return The "age" library version number.
- *
- * @since 0.1.0
- */
-SRD_API int srd_lib_version_age_get(void)
-{
-	return SRD_LIB_VERSION_AGE;
-}
-
-/**
- * Get the libsigrokdecode library version number as a string.
- *
- * @return The library version number string. The returned string is
- *         static and thus should NOT be free'd by the caller.
- *
- * @since 0.1.0
- */
-SRD_API const char *srd_lib_version_string_get(void)
-{
-	return SRD_LIB_VERSION_STRING;
 }
 
 SRD_API GSList *srd_buildinfo_libs_get(void)

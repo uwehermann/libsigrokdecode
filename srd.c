@@ -119,9 +119,8 @@ static void print_versions(void)
 	char *str;
 	const char *lib, *version;
 
-	srd_dbg("libsigrokdecode %s/%s (rt: %s/%s).",
-		SRD_PACKAGE_VERSION_STRING, SRD_LIB_VERSION_STRING,
-		srd_package_version_string_get(), srd_lib_version_string_get());
+	srd_dbg("libsigrokdecode %s (rt: %s).",
+		SRD_PACKAGE_VERSION_STRING, srd_package_version_string_get());
 
 	s = g_string_sized_new(200);
 	g_string_append(s, "Libs: ");
